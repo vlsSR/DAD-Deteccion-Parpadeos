@@ -4,36 +4,42 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProyectoLectorParpadeos"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        Title="Sistema por parpadeo" Height="450" Width="800">
+        Title="Sistema por parpadeo" Height="500" Width="800"
+        Background="#1E1E1E">
+
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <!--Panel izquierdo(informacion, arriba de video)-->
-        <GroupBox Header="Estadísticas" Grid.Row="0" Margin="0,0,0,319">
-            <StackPanel Margin="0,0,4,0" Height="78">
-                <TextBlock Text="Parpadeos: " FontWeight="Bold" FontSize="16" Height="27"/>
-                <TextBlock Text="Tiempo abiertos: " Foreground="Green" FontSize="16" Margin="0,0,0,5" Height="22"/>
-                <TextBlock Text="Tiempo cerrados: " Foreground="Blue" FontSize="16" Margin="0,0,0,5"/>
-            </StackPanel>
-        </GroupBox>
-        
-        <!--Panel izquierdo(video)-->
-        <StackPanel Grid.Column="0" Margin="0,100,10,0">
-            <Border BorderBrush="Pink" BorderThickness="1" Height="229">
-                <Image Source="{Binding ImagenVideo}" Margin="0,0,0,3" Width="486" />
-            </Border>
-            
-            <!--Botones-->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
-                <Button Content="Iniciar" Command="{Binding IniciarCamaraCommand}" Width="100" Height="30" Margin="5"/>
-                <Button Content="Detener" Command="{Binding DetenerCamaraCommand}" Width="100" Height="30" Margin="5"/>
+        <!-- Panel izquierdo (Contenedor general para estadísticas y video) -->
+        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+            <!--Panel izquierdo(informacion, arriba de video)-->
+            <GroupBox Header="Estadísticas" Margin="0,0,0,10">
+                <StackPanel Margin="0,5,0,5">
+                    <TextBlock Text="Parpadeos: " FontWeight="Bold" FontSize="16" Margin="0,0,0,5"/>
+                    <TextBlock Text="Tiempo abiertos: " Foreground="#4CD964" FontSize="16" Margin="0,0,0,5"/>
+                    <TextBlock Text="Tiempo cerrados: " Foreground="#5AC8FA" FontSize="16" Margin="0,0,0,5"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!--Panel izquierdo(video)-->
+            <StackPanel>
+                <Border BorderBrush="#333333" BorderThickness="1" Height="229" Background="#121212">
+                    <Image Source="{Binding ImagenVideo}" Margin="0,0,0,3" Width="486"/>
+                </Border>
+
+                <!--Botones-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                    <Button Content="Iniciar" Command="{Binding IniciarCamaraCommand}" Width="100" Height="30" Margin="5"/>
+                    <Button Content="Detener" Command="{Binding DetenerCamaraCommand}" Width="100" Height="30" Margin="5"/>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
-        
+
         <!-- Panel derecho arriba: Ultima petición por voz -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
@@ -41,15 +47,15 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
-                <GroupBox Header="Última petición por voz" Grid.Row="0" Margin="0,0,0,10">
-                    <StackPanel Margin="5">
-                        <TextBlock Text="Última respuesta: " FontWeight="Bold"/>
-                        <!--Binding del comando(dentro del text)-->
-                        <TextBlock Text="" Foreground="Green" FontSize="16" Margin="0,0,0,5"/>
-                    </StackPanel>
-                </GroupBox>
-                
+
+            <GroupBox Header="Última petición por voz" Grid.Row="0" Margin="0,0,0,10">
+                <StackPanel Margin="5">
+                    <TextBlock Text="Última respuesta: " FontWeight="Bold"/>
+                    <!--Binding del comando(dentro del text)-->
+                    <TextBlock Text="" Foreground="#4CD964" FontSize="16" Margin="0,0,0,5"/>
+                </StackPanel>
+            </GroupBox>
+
             <!--Lista del historial en tiempo real-->
             <GroupBox Header="Historial de eventos" Grid.Row="2">
                 <!--En el itemSource debe de ir el binding del historial de comandos-->
@@ -64,11 +70,8 @@
                             <GridViewColumn Header="Acción" Width="100"/>
                         </GridView>
                     </ListView.View>
-                    
                 </ListView>
             </GroupBox>
-                
-           
         </Grid>
     </Grid>
 </Window>
