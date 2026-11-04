@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ProyectoLectorParpadeos.ViewModels;
 
 namespace ProyectoLectorParpadeos.Views
 {
@@ -19,6 +20,7 @@ namespace ProyectoLectorParpadeos.Views
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
     }
 }

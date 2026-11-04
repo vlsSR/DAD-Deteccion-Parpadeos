@@ -13,12 +13,12 @@
     <PackageReference Include="ModernWpfUI" Version="0.9.6" />
     <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260627" />
+    <PackageReference Include="System.Speech" Version="10.0.14" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Services\" />
+    <None Update="haarcascade_frontalface_default.xml" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="haarcascade_eye.xml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
