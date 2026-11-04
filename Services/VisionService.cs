@@ -1,4 +1,3 @@
-﻿using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,16 +27,22 @@ namespace ProyectoLectorParpadeos.Services
             detectorOjos = new CascadeClassifier("haarcascade_eye.xml");
         }
 
-        public void Iniciar()
+        public bool Iniciar()
         {
-            if (ejecutando) return;
+            if (ejecutando) return true;
 
             camara = new VideoCapture(0);
-            if (!camara.IsOpened()) return;
+            if (!camara.IsOpened())
+            {
+                camara.Dispose();
+                camara = null;
+                return false;
+            }
 
             framesSinOjos = 0;
             ejecutando = true;
             bucle = Task.Run(BucleLectura);
+            return true;
         }
 
         public void Detener()
