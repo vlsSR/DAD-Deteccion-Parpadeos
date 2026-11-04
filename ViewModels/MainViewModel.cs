@@ -93,6 +93,8 @@ namespace ProyectoLectorParpadeos.ViewModels
 
             if (estadoAnterior == ojosAbiertos)
             {
+                AcumularEstadoActual(ahora);
+                inicioEstado = ahora;
                 ActualizarEstadisticas();
                 return;
             }
