@@ -9,6 +9,12 @@ namespace ProyectoLectorParpadeos
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            //Activa el modo oscuro de manera segura
+            ModernWpf.ThemeManager.Current.ApplicationTheme = ModernWpf.ApplicationTheme.Dark;
+        }
+        
     }
 
 }
