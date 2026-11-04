@@ -48,9 +48,9 @@
                 <StackPanel>
                     <TextBlock Text="ESTADÍSTICAS" Style="{StaticResource CardHeaderStyle}"/>
                     <StackPanel Margin="0,2,0,2">
-                        <TextBlock Text="Parpadeos: " FontWeight="Bold" FontSize="15" Margin="0,0,0,6" Foreground="#FFFFFF"/>
-                        <TextBlock Text="Tiempo abiertos: " Foreground="#4CD964" FontSize="15" Margin="0,0,0,6"/>
-                        <TextBlock Text="Tiempo cerrados: " Foreground="#5AC8FA" FontSize="15" Margin="0,0,0,0"/>
+                        <TextBlock Text="{Binding TotalParpadeos, StringFormat=Parpadeos: {0}}" FontWeight="Bold" FontSize="15" Margin="0,0,0,6" Foreground="#FFFFFF"/>
+                        <TextBlock Text="{Binding SegundosOjosAbiertos, StringFormat=Tiempo abiertos: {0}}" Foreground="#4CD964" FontSize="15" Margin="0,0,0,6"/>
+                        <TextBlock Text="{Binding SegundosOjosCerrados, StringFormat=Tiempo cerrados: {0}}" Foreground="#5AC8FA" FontSize="15" Margin="0,0,0,0"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
