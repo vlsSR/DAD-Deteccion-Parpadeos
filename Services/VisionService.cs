@@ -23,8 +23,22 @@ namespace ProyectoLectorParpadeos.Services
 
         public VisionService()
         {
-            detectorRostro = new CascadeClassifier("haarcascade_frontalface_default.xml");
-            detectorOjos = new CascadeClassifier("haarcascade_eye.xml");
+            string directorioBase = AppContext.BaseDirectory;
+            string rutaDetectorRostro = Path.Combine(
+                directorioBase, "haarcascade_frontalface_default.xml");
+            string rutaDetectorOjos = Path.Combine(
+                directorioBase, "haarcascade_eye.xml");
+
+            if (!File.Exists(rutaDetectorRostro) || !File.Exists(rutaDetectorOjos))
+            {
+                throw new FileNotFoundException(
+                    "No se encontraron los clasificadores Haar junto al ejecutable. " +
+                    "Asegúrese de incluir haarcascade_frontalface_default.xml y " +
+                    "haarcascade_eye.xml en el proyecto.");
+            }
+
+            detectorRostro = new CascadeClassifier(rutaDetectorRostro);
+            detectorOjos = new CascadeClassifier(rutaDetectorOjos);
         }
 
         public bool Iniciar()

@@ -26,11 +26,11 @@
                     </TextBlock>
                     <TextBlock Foreground="#4CD964" FontSize="16" Margin="0,0,0,5">
                         <Run Text="Tiempo abiertos: "/>
-                        <Run Text="{Binding TiempoOjosAbiertos}"/>
+                        <Run Text="{Binding TiempoOjosAbiertos, Mode=OneWay}"/>
                     </TextBlock>
                     <TextBlock Foreground="#5AC8FA" FontSize="16" Margin="0,0,0,5">
                         <Run Text="Tiempo cerrados: "/>
-                        <Run Text="{Binding TiempoOjosCerrados}"/>
+                        <Run Text="{Binding TiempoOjosCerrados, Mode=OneWay}"/>
                     </TextBlock>
                 </StackPanel>
             </GroupBox>
