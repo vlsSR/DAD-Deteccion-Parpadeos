@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:ProyectoLectorParpadeos"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        Title="Sistema por parpadeo" Height="560" Width="880"
-        MinWidth="820" MinHeight="520"
+        Title="Sistema por parpadeo" Height="560" Width="680"
+        MinWidth="520" MinHeight="640"
         Background="#121212" Foreground="#FFFFFF"
         WindowStartupLocation="CenterScreen">
 
@@ -90,6 +90,7 @@
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -103,9 +104,53 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+            <!--Gráficas-->
+            <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Gráfica circular: tiempo ojos abiertos / cerrados -->
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                        <TextBlock Text="TIEMPO DE OJOS" Style="{StaticResource CardHeaderStyle}"/>
+                        <Grid Width="130" Height="130">
+                            <Ellipse Fill="#2A2A2A"/>
+                            <Path Data="{Binding SectorAbiertos}" Fill="#4CD964"/>
+                            <Path Data="{Binding SectorCerrados}" Fill="#5AC8FA"/>
+                            <Ellipse Width="70" Height="70" Fill="#1E1E1E"/>
+                        </Grid>
+                        <TextBlock Text="{Binding PorcentajeAbiertos}" Foreground="#4CD964" FontSize="12" Margin="0,8,0,0"/>
+                        <TextBlock Text="{Binding PorcentajeCerrados}" Foreground="#5AC8FA" FontSize="12"/>
+                    </StackPanel>
+
+                    <!-- Gráfica de barras: parpadeos por minuto -->
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="PARPADEOS POR MINUTO" Style="{StaticResource CardHeaderStyle}"/>
+                        <ItemsControl ItemsSource="{Binding ParpadeosPorMinuto}" Height="150">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Width="26" Margin="2,0" VerticalAlignment="Bottom">
+                                        <TextBlock Text="{Binding Cantidad}" HorizontalAlignment="Center" FontSize="11" Foreground="#FFFFFF"/>
+                                        <Border Height="{Binding Altura}" Background="#FF9F0A" CornerRadius="3,3,0,0"/>
+                                        <TextBlock Text="{Binding Minuto}" HorizontalAlignment="Center" FontSize="11" Foreground="#888888" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="Minuto" Foreground="#888888" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
 
             <!--Lista del historial en tiempo real-->
-            <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Margin="0,0,0,0">
+            <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}" Margin="0,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

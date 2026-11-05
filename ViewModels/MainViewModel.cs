@@ -6,6 +6,11 @@ using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
+using System.Collections.ObjectModel;
+using System.Windows.Media;
+using ProyectoLectorParpadeos.Helpers;
+using ProyectoLectorParpadeos.Models;
+
 namespace ProyectoLectorParpadeos.ViewModels
 {
     public partial class MainViewModel : ObservableObject
@@ -17,6 +22,24 @@ namespace ProyectoLectorParpadeos.ViewModels
         private bool? estadoAnterior;
         private DateTime? inicioCicloParpadeo;
         private bool camaraActiva;
+
+        private DateTime? inicioSesion;
+        private const double RadioGrafico = 65;
+        private const int MaximoMinutosMostrados = 6;
+
+        public ObservableCollection<BarraParpadeos> ParpadeosPorMinuto { get; } = new();
+
+        [ObservableProperty]
+        private Geometry? sectorAbiertos;
+
+        [ObservableProperty]
+        private Geometry? sectorCerrados;
+
+        [ObservableProperty]
+        private string porcentajeAbiertos = "Abiertos: 0 %";
+
+        [ObservableProperty]
+        private string porcentajeCerrados = "Cerrados: 0 %";
 
         [ObservableProperty]
         private BitmapSource? imagenVideo;
@@ -110,6 +133,7 @@ namespace ProyectoLectorParpadeos.ViewModels
                      ahora - inicioCicloParpadeo.Value < DuracionMaximaParpadeo)
             {
                 TotalParpadeos++;
+                RegistrarParpadeoEnMinuto(ahora);
                 inicioCicloParpadeo = null;
             }
             else if (ojosAbiertos == true)
@@ -143,12 +167,77 @@ namespace ProyectoLectorParpadeos.ViewModels
             inicioEstado = null;
             inicioCicloParpadeo = null;
             ImagenVideo = null;
+
+            inicioSesion = DateTime.UtcNow;
+            ParpadeosPorMinuto.Clear();
+            AsegurarMinutos(inicioSesion.Value);
+            ActualizarGraficoCircular();
         }
 
         private void ActualizarEstadisticas()
         {
             OnPropertyChanged(nameof(TiempoOjosAbiertos));
             OnPropertyChanged(nameof(TiempoOjosCerrados));
+            ActualizarGraficoCircular();
+            AsegurarMinutos(DateTime.UtcNow);
+        }
+
+        private void ActualizarGraficoCircular()
+        {
+            double total = SegundosOjosAbiertos + SegundosOjosCerrados;
+
+            if (total <= 0)
+            {
+                SectorAbiertos = null;
+                SectorCerrados = null;
+                PorcentajeAbiertos = "Abiertos: 0 %";
+                PorcentajeCerrados = "Cerrados: 0 %";
+                return;
+            }
+
+            double fraccionAbiertos = SegundosOjosAbiertos / total;
+            SectorAbiertos = GraficoCircular.CrearSector(0, fraccionAbiertos * 360, RadioGrafico);
+            SectorCerrados = GraficoCircular.CrearSector(fraccionAbiertos * 360, (1 - fraccionAbiertos) * 360, RadioGrafico);
+            PorcentajeAbiertos = $"Abiertos: {fraccionAbiertos * 100:0} %";
+            PorcentajeCerrados = $"Cerrados: {(1 - fraccionAbiertos) * 100:0} %";
+        }
+
+        private void RegistrarParpadeoEnMinuto(DateTime ahora)
+        {
+            AsegurarMinutos(ahora);
+            if (ParpadeosPorMinuto.Count > 0)
+                ParpadeosPorMinuto[^1].Cantidad++;
+            RecalcularAlturas();
+        }
+
+        private void AsegurarMinutos(DateTime ahora)
+        {
+            if (inicioSesion is null)
+                return;
+
+            int minutoActual = (int)(ahora - inicioSesion.Value).TotalMinutes + 1;
+            int ultimo = ParpadeosPorMinuto.Count > 0 ? ParpadeosPorMinuto[^1].Minuto : 0;
+
+            while (ultimo < minutoActual)
+            {
+                ultimo++;
+                ParpadeosPorMinuto.Add(new BarraParpadeos { Minuto = ultimo });
+            }
+
+            while (ParpadeosPorMinuto.Count > MaximoMinutosMostrados)
+                ParpadeosPorMinuto.RemoveAt(0);
+
+            RecalcularAlturas();
+        }
+
+        private void RecalcularAlturas()
+        {
+            if (ParpadeosPorMinuto.Count == 0)
+                return;
+
+            int maximo = Math.Max(5, ParpadeosPorMinuto.Max(b => b.Cantidad));
+            foreach (var barra in ParpadeosPorMinuto)
+                barra.Altura = Math.Max(2, barra.Cantidad / (double)maximo * 100);
         }
 
         public string TiempoOjosAbiertos => $"{SegundosOjosAbiertos:0.00} s";
