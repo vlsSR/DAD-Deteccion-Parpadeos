@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:ProyectoLectorParpadeos"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
-        Title="Sistema por parpadeo" Height="560" Width="680"
-        MinWidth="520" MinHeight="640"
+        Title="Sistema por parpadeo" Height="680" Width="904"
+        MinWidth="680" MinHeight="640"
         Background="#121212" Foreground="#FFFFFF"
         WindowStartupLocation="CenterScreen">
 
