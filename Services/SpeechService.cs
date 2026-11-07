@@ -19,7 +19,7 @@ namespace ProyectoLectorParpadeos.Services
 
                 // Definir los comandos de voz, en este caso como los verbos y los objetos son fijos no creo variaciones
                 Choices comandos = new Choices();
-                comandos.Add(new string[] { "Tiempo abierto", "Tiempo cerrado", "Total paradeos", "salir" });
+                comandos.Add(new string[] { "Tiempo abierto", "Tiempo cerrado", "Total parpadeos", "salir" });
 
                 GrammarBuilder gb = new GrammarBuilder();
                 gb.Append(comandos);

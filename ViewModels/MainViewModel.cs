@@ -18,6 +18,7 @@ namespace ProyectoLectorParpadeos.ViewModels
         private static readonly TimeSpan DuracionMaximaParpadeo = TimeSpan.FromSeconds(3);
 
         private readonly VisionService visionService = new();
+        private readonly SpeechService speechService = new();
         private DateTime? inicioEstado;
         private bool? estadoAnterior;
         private DateTime? inicioCicloParpadeo;
@@ -53,19 +54,28 @@ namespace ProyectoLectorParpadeos.ViewModels
         [ObservableProperty]
         private double segundosOjosCerrados;
 
+        [ObservableProperty]
+        private string ultimaRespuesta = "";
+
+        public ObservableCollection<Actividad> Historial { get; } = new();
+
         public MainViewModel()
         {
             visionService.FotogramaProcesado += ProcesarFotograma;
+            speechService.ComandoDetectado += ProcesarComandoVoz;
         }
 
         [RelayCommand]
         private void IniciarCamara()
         {
             if (camaraActiva)
-                return;
+            return;
 
             ReiniciarEstadisticas();
             camaraActiva = visionService.Iniciar();
+
+            if (camaraActiva)
+                AgregarActividad("VISIÓN", "Cámara iniciada");
         }
 
         [RelayCommand]
@@ -81,6 +91,7 @@ namespace ProyectoLectorParpadeos.ViewModels
             inicioEstado = null;
             inicioCicloParpadeo = null;
             ActualizarEstadisticas();
+            AgregarActividad("VISIÓN", "Cámara detenida");
         }
 
         private void ProcesarFotograma(Mat imagen, bool? ojosAbiertos)
@@ -134,6 +145,7 @@ namespace ProyectoLectorParpadeos.ViewModels
             {
                 TotalParpadeos++;
                 RegistrarParpadeoEnMinuto(ahora);
+                AgregarActividad("VISIÓN", "Parpadeo detectado");
                 inicioCicloParpadeo = null;
             }
             else if (ojosAbiertos == true)
@@ -238,6 +250,39 @@ namespace ProyectoLectorParpadeos.ViewModels
             int maximo = Math.Max(5, ParpadeosPorMinuto.Max(b => b.Cantidad));
             foreach (var barra in ParpadeosPorMinuto)
                 barra.Altura = Math.Max(2, barra.Cantidad / (double)maximo * 100);
+        }
+
+        private void ProcesarComandoVoz(string comando)
+        {
+            // El reconocimiento de voz llega desde otro hilo, hay que pasar al hilo de la interfaz
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                string respuesta = comando switch
+                {
+                    "TIEMPO ABIERTO" => $"Tiempo abierto: {SegundosOjosAbiertos:0.00} s",
+                    "TIEMPO CERRADO" => $"Tiempo cerrado: {SegundosOjosCerrados:0.00} s",
+                    "TOTAL PARPADEOS" => $"Total parpadeos: {TotalParpadeos}",
+                    "SALIR" => "Cerrando la aplicación",
+                    _ => $"Comando no reconocido: {comando}"
+                };
+
+                UltimaRespuesta = respuesta;
+                AgregarActividad("VOZ", respuesta);
+
+                if (comando == "SALIR")
+                {
+                    DetenerCamara();
+                    Application.Current.Shutdown();
+                }
+            });
+        }
+
+        private void AgregarActividad(string origen, string accion)
+        {
+            Historial.Insert(0, new Actividad { Origen = origen, Accion = accion });
+
+            while (Historial.Count > 50)
+                Historial.RemoveAt(Historial.Count - 1);
         }
 
         public string TiempoOjosAbiertos => $"{SegundosOjosAbiertos:0.00} s";
