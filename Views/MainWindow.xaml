@@ -100,7 +100,7 @@
                     <StackPanel Margin="2">
                         <TextBlock Text="Última respuesta: " FontWeight="Bold" Foreground="#CCCCCC"/>
                         <!--Binding del comando(dentro del text)-->
-                        <TextBlock Text="" Foreground="#4CD964" FontSize="15" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding UltimaRespuesta}" Foreground="#4CD964" FontSize="15" Margin="0,6,0,0" TextWrapping="Wrap"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -160,15 +160,12 @@
                     <TextBlock Grid.Row="0" Text="Historial de eventos" Style="{StaticResource CardHeaderStyle}"/>
 
                     <!--En el itemSource debe de ir el binding del historial de comandos-->
-                    <ListView Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="#D0D0D0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView Grid.Row="1" ItemsSource="{Binding Historial}" Background="Transparent" BorderThickness="0" Foreground="#D0D0D0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListView.View>
                             <GridView>
-                                <!--Binding de la hora-->
-                                <GridViewColumn Header="Hora" Width="65"/>
-                                <!--Binding de la origen-->
-                                <GridViewColumn Header="Origen" Width="75"/>
-                                <!--Binding de la Acción-->
-                                <GridViewColumn Header="Acción" Width="130"/>
+                                <GridViewColumn Header="Hora" Width="65" DisplayMemberBinding="{Binding Hora}"/>
+                                <GridViewColumn Header="Origen" Width="70" DisplayMemberBinding="{Binding Origen}"/>
+                                <GridViewColumn Header="Acción" Width="150" DisplayMemberBinding="{Binding Accion}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
