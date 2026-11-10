@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OpenCvSharp;
-using ProyectoLectorParpadeos.Services;
-using System;
-using System.Windows;
-using System.Windows.Media.Imaging;
-
-using System.Collections.ObjectModel;
-using System.Windows.Media;
 using ProyectoLectorParpadeos.Helpers;
 using ProyectoLectorParpadeos.Models;
+using ProyectoLectorParpadeos.Services;
+using System;
+using System.Collections.ObjectModel;
+using System.Speech.Synthesis;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace ProyectoLectorParpadeos.ViewModels
 {
@@ -252,12 +252,12 @@ namespace ProyectoLectorParpadeos.ViewModels
                 barra.Altura = Math.Max(2, barra.Cantidad / (double)maximo * 100);
         }
 
-        private void ProcesarComandoVoz(string comando)
+        private async void ProcesarComandoVoz(string comando)
         {
             // El reconocimiento de voz llega desde otro hilo, hay que pasar al hilo de la interfaz
-            Application.Current.Dispatcher.Invoke(() =>
+            string respuesta = await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                string respuesta = comando switch
+                string respuestaActual = comando switch
                 {
                     "TIEMPO ABIERTO" => $"Tiempo abierto: {SegundosOjosAbiertos:0.00} s",
                     "TIEMPO CERRADO" => $"Tiempo cerrado: {SegundosOjosCerrados:0.00} s",
@@ -266,15 +266,27 @@ namespace ProyectoLectorParpadeos.ViewModels
                     _ => $"Comando no reconocido: {comando}"
                 };
 
-                UltimaRespuesta = respuesta;
-                AgregarActividad("VOZ", respuesta);
+                UltimaRespuesta = respuestaActual;
+                AgregarActividad("VOZ", respuestaActual);
 
-                if (comando == "SALIR")
+                return respuestaActual;
+            });
+
+            await Task.Run(() =>
+            {
+                using SpeechSynthesizer voz = new();
+                voz.SetOutputToDefaultAudioDevice();
+                voz.Speak(respuesta);
+            });
+
+            if (comando == "SALIR")
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     DetenerCamara();
                     Application.Current.Shutdown();
-                }
-            });
+                });
+            }
         }
 
         private void AgregarActividad(string origen, string accion)
